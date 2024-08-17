@@ -7,7 +7,8 @@
     "dev:server": "nodemon server/src/server.js",
     "dev:client": "cd client && npm run dev",
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "project-structure": "tree -L 9 -I 'node_modules|.git|.vscode|dist|*.css|*.map|*.woff*|*.svg|*.png|*.html|*.json|*.log'"
   },
   "keywords": [
     "mevn",
@@ -29,10 +30,12 @@
     "vue": "^2.7.14"
   },
   "devDependencies": {
-    "nodemon": "^3.1.4",
-    "concurrently": "^8.0.1",
-    "@vue/cli-service": "^4.5.19",
-    "@vue/cli-plugin-babel": "^4.5.19",
-    "@vue/cli-plugin-eslint": "^4.5.19"
+    "@vue/cli-plugin-babel": "^5.0.8",
+    "@vue/cli-service": "^5.0.8",
+    "concurrently": "^8.2.2",
+    "nodemon": "^3.1.4"
+  },
+  "engines": {
+    "node": ">=14.0.0"
   }
 }

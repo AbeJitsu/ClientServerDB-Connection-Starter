@@ -1,20 +1,24 @@
 import Vue from 'vue';
-import { createPinia, PiniaVuePlugin } from 'pinia';
-
 import App from './App.vue';
-import router from './router';
 
-import './assets/main.css';
+// Disable production tip
+Vue.config.productionTip = false;
 
-// Install Pinia as a Vue plugin
-Vue.use(PiniaVuePlugin);
+// Enable performance tracking in development
+Vue.config.performance = process.env.NODE_ENV !== 'production';
 
-// Create a Pinia instance
-const pinia = createPinia();
+// Global error handler
+Vue.config.errorHandler = function (err, vm, info) {
+  console.error('Vue Error:', err, info);
+  // You could also send errors to a logging service here
+};
 
-// Initialize the Vue instance with Pinia
+// Enable Vue Devtools in development
+if (process.env.NODE_ENV === 'development') {
+  Vue.config.devtools = true;
+}
+
+// Initialize the Vue instance
 new Vue({
-  router,
-  pinia,
   render: (h) => h(App),
 }).$mount('#app');

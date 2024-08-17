@@ -1,49 +1,50 @@
 const express = require('express');
+const http = require('http');
 const cors = require('cors');
 require('dotenv').config();
 const connectDB = require('./db/mongoose');
-const Item = require('./models/Item');
+const setupWebSocket = require('./server/src/websocket');
+const infoRoutes = require('./routes/infoRoutes');
+const itemRoutes = require('./routes/itemRoutes');
+const corsTestRoute = require('./routes/corsTestRoute');
+const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
+const server = http.createServer(app);
+
 const PORT = process.env.PORT || 3000;
 
 // Connect to the database
 connectDB();
 
 // Middleware
-app.use(cors());
+const corsOptions = {
+  origin: process.env.CLIENT_URL || 'http://localhost:8080',
+  optionsSuccessStatus: 200,
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 
-// Basic route
-app.get('/', (req, res) => {
-  res.json({
-    message: 'Welcome to the ClientServerDB-Connection-Starter server',
-  });
-});
+// Routes
+app.use('/api/info', infoRoutes);
+app.use('/api/items', itemRoutes);
+app.use('/api/cors-test', corsTestRoute);
 
-// Item routes
-app.get('/api/items', async (req, res) => {
-  try {
-    const items = await Item.find();
-    res.json(items);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
+// Setup WebSocket using the imported module
+const wss = setupWebSocket(server);
 
-app.post('/api/items', async (req, res) => {
-  const newItem = new Item(req.body);
-  try {
-    await newItem.save();
-    res.status(201).json(newItem);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-});
+// Error handling middleware
+app.use(errorHandler);
 
 // Start server
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+const startServer = () => {
+  server.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+    console.log(`WebSocket server is running on ws://localhost:${PORT}`);
+  });
+};
 
+startServer();
+
+module.exports = { app, server }; // For testing purposes
 // server/src/server.js
